@@ -34,7 +34,6 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-#include <complex.h>
 
 /* USER CODE END Includes */
 
@@ -251,7 +250,6 @@ int main(void)
 //-----------------------------------------
 
   ResetArray(array, RES_X);
-  HAL_TIM_Base_Start_IT(&htim7);
 
   for (uint8_t i = 0; i < 7; ++i)
   {
@@ -260,6 +258,8 @@ int main(void)
 
   TextField_Draw(&text_rule);
   DrawRuleDiagram(rule, true);
+
+  HAL_TIM_Base_Start_IT(&htim7);
   /* USER CODE END 2 */
 
   /* Infinite loop */

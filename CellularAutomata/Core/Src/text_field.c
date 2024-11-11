@@ -23,7 +23,8 @@ uint16_t GetCursorPos(uint16_t field_pos, uint16_t field_size, uint16_t text_siz
 		return field_pos + (field_size - text_size) / 2;
 	}
 
-	return field_pos + field_size;
+	/* alignment == ALIGN_END */
+	return field_pos + field_size - text_size;
 }
 
 uint16_t NumOfLines(char text[])
