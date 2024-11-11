@@ -13,6 +13,8 @@
 #include "stdio.h"
 #include "fatfs.h"
 
+/* Get a list of all filenames in a given path with the given filetype */
+int GetFilenames(char file_names[][13], const char *path, const char filetype[]);
 
 /* mounts the sd card*/
 void Mount_SD (const TCHAR* path);

@@ -5,9 +5,9 @@
  *      Author: Controllerstech
  */
 
-#include <File_Handling.h>
+#include "File_Handling.h"
 #include "stm32f4xx_hal.h"
-
+#include <stdbool.h>
 
 extern UART_HandleTypeDef huart1;
 #define UART &huart1
@@ -26,6 +26,53 @@ FATFS *pfs;
 DWORD fre_clust;
 uint32_t total, free_space;
 
+bool CheckFiletype(const char filename[], const char filetype[])
+{
+	char* extension = strrchr(filename, '.');
+
+	if (extension != NULL)
+	{
+	  return (bool) strcmp(extension + 1, filetype);
+	}
+
+	return false;
+}
+
+int GetFilenames(char file_names[][13], const char *path, const char filetype[])
+{
+    FRESULT res;
+    DIR dir;
+    FILINFO fno;
+
+    int num_files = 0;
+
+    res = f_opendir(&dir, path); /* Open the directory */
+
+    if (res != FR_OK)
+    {
+    	printf("Failed to open \"%s\". (%u)\r\n", path, res);
+    	return -1;
+    }
+
+	num_files = 0;
+
+	while (true)
+	{
+		res = f_readdir(&dir, &fno);                     /* Read a directory item */
+		if (res != FR_OK || fno.fname[0] == 0)
+		{
+			break;    /* Error or end of dir */
+		}
+		if (!(fno.fattrib & AM_DIR) && CheckFiletype(fno.fname, filetype)) /* Checking that it's a bin file */
+		{
+			strcpy(file_names[num_files], fno.fname);
+			++num_files;
+		}
+	}
+
+	f_closedir(&dir);
+    return num_files;
+}
 
 void Send_Uart (char *string)
 {
