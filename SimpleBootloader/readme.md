@@ -2,7 +2,7 @@
 
 ## Description
 
-This is a project for the STM32F407VET6 board which uses the ILI9341 LCD display and an SD card reader. It implements a minimal bootloader capable of loading firmware files from an SD card through a simple interface.
+This is a project for the STM32F407VET6 board which uses the ILI9341 LCD display and an SD card drive. It implements a minimal bootloader capable of loading firmware files from an SD card through a simple interface.
 
 The bootloader library is a modified version of the [Embertronix bootloader](https://embetronicx.com/category/tutorials/microcontrollers/stm32/bootloader/).
 

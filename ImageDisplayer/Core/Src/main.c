@@ -35,8 +35,6 @@
 #include "XPT2046_touch.h"
 #include "jpeg_view.h"
 #include "File_Handling.h"
-#include "w25qxx.h"
-#include "pic07.h"
 
 #include "touchscreen_button.h"
 #include "text_field.h"
@@ -52,8 +50,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-//unsigned long testCircles(uint8_t radius, uint16_t color);
-
 
 /* USER CODE END PD */
 
@@ -65,8 +61,6 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-uint16_t part[44032];
-
 FATFS myFatFS;
 FIL myFile;
 UINT myBytes;
@@ -99,9 +93,9 @@ Button button_next = {
 
 TextField text_filename = {
 	.x = 110, .y = 270,
-	.width = 50, .height = 30,
+	.width = 120, .height = 40,
 	.font = &Font16,
-	.color_text = color_text, .color_bg = color_bg, .color_frame = color_bg,
+	.color_text = color_text, .color_bg = color_bg, .color_frame = color_text,
 	.text = "",
 	.horizontal_alignment = ALIGN_BEGIN,
 	.vertical_alignment = ALIGN_CENTER,
@@ -131,61 +125,6 @@ int _write(int file, char *ptr, int len)
 	HAL_UART_Transmit(&huart1, (uint8_t *) ptr, len, HAL_MAX_DELAY);
 	return len;
 }
-
-////-----------------------------------------
-// void showPic(uint8_t pic_nr)
-// {
-//     uint32_t index=0;
-//     uint32_t laki_count = 1024*150/2;
-//       while (index<= laki_count)
-//     {
-//         LCD_DataWrite(laki[index]);
-//         index++;
-//     }
-// }
-// //-----------------------------------------
-// void readPicFromFlash(uint8_t pic_nr){
-//
-// #define rest_pic (150*1024 - 131072)
-// #define rest0  rest_pic / 2
-// #define  CCM_ADDRESS   0x10000000UL
-//
-//     uint32_t i, blk_nr;
-//     uint16_t * CCM_ADD  = (uint16_t *) CCM_ADDRESS;
-//
-//      blk_nr = pic_nr*3;
-//
-//     W25qxx_ReadBlock((uint8_t*)CCM_ADD, blk_nr+0, 0,w25qxx.BlockSize);
-//     W25qxx_ReadBlock((uint8_t*)&part[0], blk_nr+1, 0,w25qxx.BlockSize);
-//     W25qxx_ReadBlock((uint8_t*)&part[32768], blk_nr+2, 0, rest_pic);
-//
-//     for(i=0;i<32768;i++)
-//     {
-//         LCD_DataWrite(CCM_ADD[i]);
-//     }
-//
-//     for(i=0;i<44032;i++)
-//     {
-//         LCD_DataWrite(part[i]);
-//     }
-// }
-// // ---------------------------------------------------
-// void savePicToFlash(uint8_t pic_nr){
-//     uint8_t block;
-//     uint32_t index=0;
-//     uint32_t laki_size =  sizeof(laki);
-//     block = pic_nr * 3;
-//
-//     W25qxx_EraseBlock(block);
-//     W25qxx_EraseBlock(block+1);
-//     W25qxx_EraseBlock(block+2);
-//
-//     W25qxx_WriteBlock((uint8_t*)&laki[index], block, 0,w25qxx.BlockSize);index+=65536/2;
-//     W25qxx_WriteBlock((uint8_t*)&laki[index], block+1, 0,w25qxx.BlockSize);index+=65536/2;
-//     W25qxx_WriteBlock((uint8_t*)&laki[index], block+2, 0,laki_size-(65536));index+=65536/2;
-// }
-  //-----------------------------------------
-
 
 /* USER CODE END 0 */
 
@@ -232,10 +171,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   printf("\x1b[2J\x1b[;H");
-  printf("*-------------------------*\r\n");
-  printf("* UART is OK  *\r\n");
-  printf("*-------------------------*\r\n");
-
+  printf("\nInitializing ImageDisplayer\r\n\n");
 
 // Init LCD
    lcdBacklightOn();
@@ -243,53 +179,31 @@ int main(void)
    lcdSetOrientation(LCD_ORIENTATION_PORTRAIT_MIRROR);
    lcdFillRGB(color_bg);
 
+   Button_Draw(&button_next);
+   Button_Draw(&button_prev);
+   TextField_Draw(&text_filename);
 
     Mount_SD("/");
-//    Scan_SD("/");
-//    Check_SD_Space();
-    num_files = GetFilenames(file_names, "/img");
+    num_images = GetFilenames(image_filenames, "/img", "jpg");
 
-   // Create_File("FILE1.TXT");
-   // Create_File("FILE2.TXT");
-    Unmount_SD("/");
+    printf("%d images found:\r\n", num_images);
 
+    for (uint16_t i = 0; i < num_images; ++i)
+    {
+    	printf("%s\r\n", image_filenames[i]);
+    }
+
+    printf("\n");
+
+    SetImage(img_index);
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-//    showPic(5);
-//
-//            lcdPrintf("INIT OF SPI FLASH W25Q16 :");
-//            if (W25qxx_Init()){
-//                lcdPrintf("OK\n");
-//                lcdPrintf("CHIP ID :%d\n",w25qxx.ID);
-//                lcdPrintf("SECTOR COUNT :%d\n",w25qxx.SectorCount);
-//                lcdPrintf("SECTOR SIZE :%d\n",w25qxx.SectorSize);
-//                lcdPrintf("BLOCK COUNT :%d\n",w25qxx.BlockCount);
-//                lcdPrintf("BLOCK SIZE :%d\n",w25qxx.BlockSize);
-//                lcdPrintf("PAGE COUNT :%d\n",w25qxx.PageCount);
-//                lcdPrintf("PAGE SIZE :%d\n",w25qxx.PageSize);
-//
-//                savePicToFlash(1);
-//                readPicFromFlash(1);
-//            }
-//            else {
-//                lcdPrintf("ERROR\n");
-//                while(1);;
-//            }
-
   while (1)
   {
-//
-//	  jpeg_screen_view("", "11.jpg", 0, 0, &iw, &ih);
-//	  HAL_Delay(2000);
-//	  jpeg_screen_view("0:/", "12.jpg", 0, 0, &iw, &ih);
-//	  	  HAL_Delay(2000);
-//	  jpeg_screen_view("", "13.jpg", 0, 0, &iw, &ih);
-//	  HAL_Delay(2000);
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -347,9 +261,35 @@ void SystemClock_Config(void)
 
 void SetImage(uint16_t img_index)
 {
-	char buf[18];
-	sprintf(buf, "img/%s", image_filenames[img_index]);
-	jpeg_screen_view("", buf, 0, 0, &iw, &ih);
+//	char buf[18];
+//	sprintf(buf, "img/%s", image_filenames[img_index]);
+
+	JPGRESULT res = jpeg_screen_view("/img/", image_filenames[img_index], 0, 0, 240, 280, &iw, &ih);
+
+	printf("Loading image: %s\r\n", image_filenames[img_index]);
+	TextField_SetText(&text_filename, image_filenames[img_index]);
+	TextField_Draw(&text_filename);
+
+	if (res == JPG_MOUNT_ERROR)
+	{
+		printf("JPG mount error\r\n");
+		return;
+	}
+	else if (res == JPG_OPEN_ERROR)
+	{
+		printf("JPG open error\r\n");
+		return;
+	}
+	else if (res == JPG_DECODE_ERROR)
+	{
+		printf("JPG decode error\r\n");
+		return;
+	}
+	else
+	{
+
+		printf("Image loaded. Size: %u x %u\r\n", iw, ih);
+	}
 }
 
 void  HAL_GPIO_EXTI_Callback ( uint16_t GPIO_Pin)
@@ -367,17 +307,15 @@ void  HAL_GPIO_EXTI_Callback ( uint16_t GPIO_Pin)
 
 			/* Handle button press */
 			uint16_t x = 0, y = 0;
-			if (!XPT2046_TouchGetCoordinates(&y, &x))
+			if (!XPT2046_TouchGetCoordinates(&x, &y))
 			{
 				return;
 			}
 
-			y = lcdGetHeight() - y; /* The display is flipped */
-
 			if (Button_IsPressed(&button_next, x, y))
 			{
-				Button_SetState(&button_prev, true);
-				Button_Draw(&button_prev);
+				Button_SetState(&button_next, true);
+				Button_Draw(&button_next);
 
 				img_index = (img_index + 1) % num_images;
 				SetImage(img_index);

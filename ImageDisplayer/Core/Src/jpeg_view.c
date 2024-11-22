@@ -1,9 +1,8 @@
-
 #define JPEG_INTERNALS
 #include "jinclude.h"
 #include "jpeglib.h"
 #include "ili9341.h"
-
+#include "jpeg_view.h"
 
 struct jpeg_decompress_struct cinfo;
 typedef struct RGB
@@ -19,7 +18,10 @@ RGB_typedef *RGB_matrix;
 uint16_t RGB16PixelColor;
 static uint8_t *rowBuff;
 
-static uint8_t jpeg_decode(JFILE *file, uint8_t *rowBuff, int posx, int posy, UINT *iw, UINT *ih)
+static uint8_t jpeg_decode(JFILE *file, uint8_t *rowBuff,
+						   int posx, int posy,
+						   UINT sizex, UINT sizey,
+						   UINT *iw, UINT *ih)
 {
 	uint32_t line_counter = 0;
 	uint32_t i = 0, xc=0, ratio;
@@ -30,8 +32,8 @@ static uint8_t jpeg_decode(JFILE *file, uint8_t *rowBuff, int posx, int posy, UI
 
 
   buffer[0] = rowBuff;
-  lcdWidth = 320;
-  lcdHeight = 240;
+  lcdWidth = sizex;
+  lcdHeight = sizey;
 
   cinfo.err = jpeg_std_error(&jerr);
 
@@ -122,33 +124,41 @@ static uint8_t jpeg_decode(JFILE *file, uint8_t *rowBuff, int posx, int posy, UI
   return 1;
 }
 
-void jpeg_screen_view(char* path, char* fn, int px, int py, UINT *iw, UINT *ih)
+JPGRESULT jpeg_screen_view(char* path, char* fn,
+					  int px, int py,
+					  UINT sizex, UINT sizey,
+					  UINT *iw, UINT *ih)
 {
-  FIL file;
-  FATFS fs;
+	FIL file;
+	FATFS fs;
+	JPGRESULT ret;
 
-  char sf[256];
+	char sf[256];
 
-rowBuff = JMALLOC(2048);
+	rowBuff = JMALLOC(2048);
 
-  sprintf(sf, "%s %s", path, fn);
+	sprintf(sf, "%s%s", path, fn);
 
-  if (f_mount(&fs, "", 0) != FR_OK) {
-	  JFREE(rowBuff);
-	  return;
-  }
-  if(f_open(&file, fn, FA_READ) == FR_OK)
-  {
-    jpeg_decode(&file,rowBuff,px,py, iw, ih);
-    f_close(&file);
-  }
-  else
-  {
-	  lcdPrintf(sf, "%s \r\n File open Error!!\r\n", sf);
+	if (f_mount(&fs, "", 0) != FR_OK)
+	{
+		ret = JPG_MOUNT_ERROR;
+	}
+	else if (f_open(&file, sf, FA_READ) != FR_OK)
+	{
+		ret = JPG_OPEN_ERROR;
+	}
+	else if (jpeg_decode(&file, rowBuff, px, py, sizex, sizey, iw, ih) != 1)
+	{
+		f_close(&file);
+		ret = JPG_DECODE_ERROR;
+	}
+	else
+	{
+		f_close(&file);
+		ret = JPG_OK;
+	}
 
-	  //lcdPrintf("File open Error!");
-  }
-  f_mount(&fs, "", 0);
-  JFREE(rowBuff);
-
+//	f_mount(&fs, "", 0);
+	JFREE(rowBuff);
+	return ret;
 }
