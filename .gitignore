@@ -2,4 +2,4 @@
 .settings
 Release
 Debug
-.launch
+*.launch
