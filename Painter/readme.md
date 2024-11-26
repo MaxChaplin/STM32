@@ -1,5 +1,9 @@
 # Painter
 
+<!-- ![Display](photo.jpg) -->
+
+<img src="photo.jpg" width=30% height=30%>
+
 ## Description
 
 This is a project for the STM32F407VET6 board which uses the ILI9341 LCD display and XPT2046 touchscreen controller. It's a simple drawing program with a circular brush.

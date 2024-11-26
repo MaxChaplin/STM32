@@ -1,5 +1,7 @@
 # Simple Bootloader
 
+<img src="photo.jpg" width=30% height=30%>
+
 ## Description
 
 This is a project for the STM32F407VET6 board which uses the ILI9341 LCD display and an SD card drive. It implements a minimal bootloader capable of loading firmware files from an SD card through a simple interface.

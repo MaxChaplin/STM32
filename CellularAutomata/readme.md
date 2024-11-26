@@ -1,5 +1,7 @@
 # Cellular Automata
 
+<img src="photo.jpg" width=30% height=30%>
+
 ## Description
 
 This is a project for the STM32F407VET6 board which uses the ILI9341 LCD display and XPT2046 touchscreen controller. It is a visualization of [elementary cellular automatons](https://en.wikipedia.org/wiki/Elementary_cellular_automaton) - each row of pixels is generated from the previous one according to a local and deterministic rule. The rule specifies how each pixel in a new row is decided according to each possible permutation of its neighbors in the previous row. It is visualized on the top of the display, and its number appears in the lower center part.

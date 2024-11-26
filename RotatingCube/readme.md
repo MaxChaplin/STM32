@@ -1,6 +1,6 @@
 # RotatingCube
 
-![Display](Image/IMG_20240904_141002.jpg)
+<img src="photo.jpg" width=30% height=30%>
 
 ## Description
 
