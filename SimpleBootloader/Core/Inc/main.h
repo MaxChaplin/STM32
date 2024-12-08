@@ -31,7 +31,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "ili9341_io.h"
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

@@ -65,9 +65,9 @@ const uint16_t color_bg = COLOR_BLACK;
 const uint16_t brush_colors[] = {COLOR_RED, COLOR_ORANGE, COLOR_YELLOW,
 								 COLOR_GREEN, COLOR_OLIVE, COLOR_CYAN,
 								 COLOR_BLUE, COLOR_NAVY, COLOR_PURPLE,
-								 COLOR_MAROON, COLOR_WHITE, COLOR_BLACK};
+								 COLOR_MAROON, COLOR_WHITE, COLOR_GRAY_128, COLOR_BLACK};
 
-const uint16_t num_colors = sizeof(brush_colors) / sizeof(uint16_t);
+const uint16_t num_colors = sizeof(brush_colors);
 uint16_t color_i = 0;
 
 const uint16_t brush_radii[] = {1, 2, 3, 4, 6, 8, 10, 12};

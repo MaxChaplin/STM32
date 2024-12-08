@@ -67,7 +67,7 @@ char file_names[16][13];
 bool exist_update = false;
 const uint8_t boot_timer_max = 10;
 uint8_t boot_timer = boot_timer_max;
-uint8_t switch_delay = 1000;
+uint32_t switch_delay = 1000;
 
 bool debounce_flag = false;
 
@@ -502,12 +502,12 @@ void Intro()
 {
 	printf("\n");
 	lcdSetCursor(0, 0);
-	printf("---------------------\r\n");
-	printf("  Simple Bootloader  \r\n");
-	printf("---------------------\r\n");
+	printf("---------------------------------\r\n");
+	printf("        Simple Bootloader        \r\n");
+	printf("---------------------------------\r\n");
 
 	num_files = GetFilenames(file_names, "/bin");
-	printf("%u files found:\r\n", num_files);
+	printf("%u files found.\r\n", num_files);
 
 	printf("K0: Load program\r\n");
 	printf("K1: Change program\r\n");
@@ -567,8 +567,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 	if (GPIO_Pin == KEY0_Pin)
 	{
-		HAL_TIM_Base_Stop_IT(&htim7);
-		LoadApp();
+		boot_timer = 0;
 	}
 
 	if (GPIO_Pin == KEY1_Pin && !debounce_flag)
